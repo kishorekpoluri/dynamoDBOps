@@ -6,6 +6,7 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import priv.dyndb.dyndbms.util.DBUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -25,8 +26,8 @@ public class ContactDaoADB {
     }
 
     public void createTable(){
-        ListTablesResult tablesResult = amazonDynamoDB.listTables();
-        boolean exists = tablesResult.getTableNames().stream().anyMatch((tableName) -> tableName.equals("CONTACT"));
+
+        boolean exists= DBUtil.checkIfTableExists(tableName,amazonDynamoDB);
         if (!exists) {
             CreateTableRequest request = new CreateTableRequest();
             request.setTableName(tableName);

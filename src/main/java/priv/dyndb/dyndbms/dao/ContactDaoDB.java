@@ -1,11 +1,13 @@
 package priv.dyndb.dyndbms.dao;
 
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.internal.IteratorSupport;
 import com.amazonaws.services.dynamodbv2.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import priv.dyndb.dyndbms.util.DBUtil;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -17,13 +19,16 @@ public class ContactDaoDB {
     @Autowired
     private DynamoDB dynamoDB;
 
+    @Autowired
+    private AmazonDynamoDB amazonDynamoDB;
+
     private static final String tableName = "CONTACT";
 
     @PostConstruct
     public void postConstruct() {
-        deleteTable();
-        createTable();
-        list();
+        //deleteTable();
+        //createTable();
+        //list();
     }
 
     public void deleteTable(){
@@ -32,16 +37,7 @@ public class ContactDaoDB {
     }
 
         public void createTable(){
-            TableCollection<ListTablesResult> tableCollection= dynamoDB.listTables();
-            boolean exists=false;
-            IteratorSupport<Table,ListTablesResult> iteratorSupport=tableCollection.iterator();
-            while (iteratorSupport.hasNext()) {
-                Table table=iteratorSupport.next();
-                if(table.getTableName().equals(tableName)) {
-                    exists=true;
-                    break;
-                }
-            }
+            boolean exists= DBUtil.checkIfTableExists(tableName,amazonDynamoDB);
             if (!exists) {
                 CreateTableRequest request = new CreateTableRequest();
                 request.setTableName(tableName);
