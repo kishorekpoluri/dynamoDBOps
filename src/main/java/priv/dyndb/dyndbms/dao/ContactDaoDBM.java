@@ -93,6 +93,11 @@ public class ContactDaoDBM {
         }*/
     }
 
+    public Contact get(String name){
+        Contact contact=dynamoDBMapper.load(Contact.class,name);
+        return contact;
+    }
+
     public void add(Contact contact) {
         try {
             dynamoDBMapper.save(contact);
